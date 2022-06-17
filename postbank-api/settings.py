@@ -39,10 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third party apps
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
+    'phonenumber_field',
 
+    'base',
     'accounts',
 ]
 
@@ -89,20 +92,13 @@ WSGI_APPLICATION = 'postbank-api.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL'),
+        conn_max_age=600,
+    )
 }
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=config('DATABASE_URL'),
-#         conn_max_age=600,
-#     )
-# }
-#
-# DATABASES['default'].update({'ATOMIC_REQUESTS': True})
+DATABASES['default'].update({'ATOMIC_REQUESTS': True})
 
 
 REST_FRAMEWORK = {
@@ -169,3 +165,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Phone Number Constants
+PHONENUMBER_DB_FORMAT = 'NATIONAL'
+PHONENUMBER_DEFAULT_REGION = 'BG'
