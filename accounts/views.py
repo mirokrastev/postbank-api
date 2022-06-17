@@ -15,7 +15,7 @@ class LoginView(ObtainAuthToken):
 
 class RegisterViewSet(mixins.CreateModelMixin, GenericViewSet):
     queryset = models.User.objects.all()
-    serializer_class = serializers.UserSerializer
+    serializer_class = serializers.ClientSerializer
     permission_classes = ()
 
     def perform_create(self, serializer):
@@ -38,4 +38,4 @@ class LogoutView(APIView):
 
 class UserViewSet(ReadOnlyModelViewSet):
     queryset = models.User.objects.all()
-    serializer_class = serializers.UserSerializer
+    serializer_class = serializers.ClientSerializer

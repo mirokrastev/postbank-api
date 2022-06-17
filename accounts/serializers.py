@@ -39,19 +39,23 @@ class ValidThruField(serializers.DateField):
         return value
 
 
-class UserSerializer(serializers.ModelSerializer):
+class ClientSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, trim_whitespace=False, style={'input_type': 'password'})
 
-    phone_number = PhoneNumberField()
-    card_number = CardNumberField(min_length=13, max_length=16)
-    valid_thru = ValidThruField()
+    phone_number = PhoneNumberField(source='client.phone_number')
+    card_number = CardNumberField(min_length=13, max_length=16, source='client.card_number')
+    valid_thru = ValidThruField(source='client.valid_thru')
 
     def validate_password(self, value):
         if not validate_password(value):
             return value
 
     def create(self, validated_data):
-        user = models.User.objects.create_user(**validated_data)
+        user_data = {'email': validated_data.pop('email'),
+                     'username': validated_data.pop('username'),
+                     'password': validated_data.pop('password')}
+        user = models.User.objects.create_user(**user_data)
+        models.Client.objects.create(user=user, **validated_data['client'])
         return user
 
     class Meta:
