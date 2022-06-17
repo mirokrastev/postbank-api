@@ -39,16 +39,32 @@ class ValidThruField(serializers.DateField):
         return value
 
 
-class ClientSerializer(serializers.ModelSerializer):
+class BaseSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, trim_whitespace=False, style={'input_type': 'password'})
-
-    phone_number = PhoneNumberField(source='client.phone_number')
-    card_number = CardNumberField(min_length=13, max_length=16, source='client.card_number')
-    valid_thru = ValidThruField(source='client.valid_thru')
 
     def validate_password(self, value):
         if not validate_password(value):
             return value
+
+
+class TraderSerializer(BaseSerializer):
+    phone_number = PhoneNumberField(source='trader.phone_number')
+
+    class Meta:
+        model = models.User
+        fields = ('id', 'username', 'password', 'email', 'phone_number')
+
+
+class BankEmployeeSerializer(BaseSerializer):
+    class Meta:
+        model = models.User
+        fields = ('id', 'username', 'password', 'email')
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    phone_number = PhoneNumberField(source='client.phone_number')
+    card_number = CardNumberField(min_length=13, max_length=16, source='client.card_number')
+    valid_thru = ValidThruField(source='client.valid_thru')
 
     def create(self, validated_data):
         user_data = {'email': validated_data.pop('email'),

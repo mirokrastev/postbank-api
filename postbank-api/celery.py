@@ -19,8 +19,16 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
-    'sync_db': {
-        'task': 'sync_db',
+    'sync_traders': {
+        'task': 'sync_traders',
         'schedule': timedelta(seconds=5)
-    }
+    },
+    # 'sync_bank_employees': {
+    #     'task': 'sync_bank_employees',
+    #     'schedule': timedelta(seconds=12)
+    # },
+    # 'sync_terminals': {
+    #     'task': 'sync_terminals',
+    #     'schedule': timedelta(seconds=20)
+    # },
 }
