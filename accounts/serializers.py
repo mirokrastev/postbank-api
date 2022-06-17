@@ -10,6 +10,18 @@ from accounts import models
 from accounts import utils
 
 
+class TerminalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.POSTerminal
+        fields = '__all__'
+
+
+class TraderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Trader
+        fields = '__all__'
+
+
 class CardNumberField(serializers.CharField):
     def to_representation(self, value):
         raw_digits = get_digits(value)
