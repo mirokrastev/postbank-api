@@ -57,6 +57,7 @@ class ClientSerializer(serializers.ModelSerializer):
     phone_number = PhoneNumberField(source='client.phone_number')
     card_number = CardNumberField(min_length=13, max_length=16, source='client.card_number')
     valid_thru = ValidThruField(source='client.valid_thru')
+    notifications_status = serializers.BooleanField(source='client.notifications_status')
 
     def validate_password(self, value):
         if not validate_password(value):
@@ -72,4 +73,4 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ('id', 'username', 'password', 'email', 'phone_number', 'card_number', 'valid_thru')
+        fields = ('id', 'username', 'password', 'email', 'phone_number', 'card_number', 'valid_thru', 'notifications_status')
