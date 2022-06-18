@@ -20,7 +20,8 @@ class TradersPanelView(ListCreateAPIView):
     filter_backends = (filters.DjangoFilterBackend,)
 
     def get_queryset(self):
-        return Discount.objects.filter(trader=self.request.user.trader)
+        trader = Trader.objects.get(user=self.request.user)
+        return Discount.objects.filter(trader=trader)
 
 
 # ADMIN PANEL 2
