@@ -5,12 +5,11 @@ from celery import shared_task
 from decouple import config
 from django.db import DatabaseError
 
-from accounts import serializers
 from accounts import models
 
 API_KEY = config('CONST_TOKEN')
 headers = {'API-KEY': API_KEY}
-base_url = 'http://localhost:8001/api'
+base_url = config('BASE_URL')
 
 
 def get_or_create(model, data):
@@ -22,10 +21,10 @@ def get_or_create(model, data):
             instance = model.objects.create(**data)
             created = True
         except DatabaseError:
-            return False
+            return False, False
     return instance, created
 
-# todo add partial sync print; full sync fail
+
 @shared_task(name='sync_traders')
 def sync_traders():
     response = requests.get(f'{base_url}/users/traders', headers=headers)
