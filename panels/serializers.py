@@ -1,11 +1,12 @@
 from rest_framework import serializers
 
+from accounts.serializers import TraderSerializer
 from panels import models
 
 
 class DiscountSerializer(serializers.ModelSerializer):
-    trader_username = serializers.CharField(source='trader.user.username')
+    trader = TraderSerializer()
 
     class Meta:
         model = models.Discount
-        fields = '__all__'
+        fields = ('id', 'discount_percent', 'start_date', 'end_date', 'status', 'is_processed', 'trader')
