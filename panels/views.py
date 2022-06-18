@@ -5,7 +5,7 @@ from rest_framework.generics import ListCreateAPIView, ListAPIView
 from rest_framework.views import APIView
 from django_filters import rest_framework as filters
 
-from accounts.models import POSTerminal, Trader, Client
+from accounts.models import POSTerminal, Trader, Client, User
 from accounts.serializers import TraderSerializer, ClientSerializer, TerminalSerializer
 from panels.filters import DiscountsFilter
 from panels.models import Discount

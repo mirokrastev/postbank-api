@@ -9,6 +9,12 @@ from accounts import models
 from accounts import utils
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.User
+        fields = ('id', 'username', 'email', 'type')
+
+
 class CardNumberField(serializers.CharField):
     def to_representation(self, value):
         raw_digits = get_digits(value)
@@ -38,48 +44,29 @@ class ValidThruField(serializers.DateField):
         return value
 
 
-class UserSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField()
-    password = serializers.CharField(trim_whitespace=False, style={'input_type': 'password'})
-
-    def validate_password(self, value):
-        if not validate_password(value):
-            return value
-
-    class Meta:
-        model = models.User
-        fields = ('id', 'username', 'password', 'email')
-
-
 class TraderSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, trim_whitespace=False, style={'input_type': 'password'})
-    phone_number = PhoneNumberField(source='trader.phone_number')
-
-    def validate_password(self, value):
-        if not validate_password(value):
-            return value
+    user = UserSerializer()
+    phone_number = PhoneNumberField()
 
     class Meta:
-        model = models.User
-        fields = ('id', 'username', 'password', 'email', 'phone_number')
+        model = models.Trader
+        fields = ('id', 'user', 'phone_number')
 
 
 class BankEmployeeSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, trim_whitespace=False, style={'input_type': 'password'})
-
-    def validate_password(self, value):
-        if not validate_password(value):
-            return value
+    user = UserSerializer()
 
     class Meta:
-        model = models.User
-        fields = ('id', 'username', 'password', 'email')
+        model = models.BankEmployee
+        fields = ('id', 'user')
 
 
 class TerminalSerializer(serializers.ModelSerializer):
+    trader = TraderSerializer()
+
     class Meta:
         model = models.POSTerminal
-        fields = '__all__'
+        fields = ('id', 'trader')
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -104,4 +91,5 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.User
-        fields = ('id', 'username', 'password', 'email', 'phone_number', 'card_number', 'valid_thru', 'notifications_status')
+        fields = ('id', 'username', 'password', 'type', 'email', 'phone_number',
+                  'card_number', 'valid_thru', 'notifications_status')
