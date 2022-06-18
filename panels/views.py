@@ -41,6 +41,11 @@ class EmployeesPanelGetOffers(ListAPIView):
     serializer_class = DiscountSerializer
 
 
+class EmployeesPanelGetWaitingOffers(ListAPIView):
+    queryset = Discount.objects.filter(status='Waiting')
+    serializer_class = DiscountSerializer
+
+
 # ADMIN PANEL 3
 
 class ClientsPanelView(ListAPIView):
