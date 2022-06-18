@@ -10,6 +10,12 @@ from accounts import models
 from accounts import utils
 
 
+class TerminalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.POSTerminal
+        fields = '__all__'
+
+
 class CardNumberField(serializers.CharField):
     def to_representation(self, value):
         raw_digits = get_digits(value)
@@ -111,16 +117,6 @@ class BankEmployeeSyncSerializer(serializers.Serializer):
 class POSTerminalSyncSerializer(serializers.Serializer):
     id = serializers.UUIDField()
     trader = TraderSerializer()
-
-    def create(self, validated_data):
-        trader_info = validated_data.pop('trader')
-
-        trader_sync_serializer = TraderSyncSerializer(data=trader_info)
-        if trader_sync_serializer.is_valid():
-            trader = trader_sync_serializer.save()
-
-        pos_terminal = models.POSTerminal.objects.get_or_create(id=validated_data.pop('id'), trader=trader)
-        return pos_terminal
 
 
 class ClientSerializer(serializers.ModelSerializer):
