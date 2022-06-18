@@ -5,7 +5,9 @@ from celery import Celery
 
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cloud.settings')
+from celery.schedules import crontab
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'postbank-api.settings')
 
 app = Celery('postbank')
 
@@ -31,4 +33,8 @@ app.conf.beat_schedule = {
         'task': 'sync_terminals',
         'schedule': timedelta(hours=1)
     },
+    'send_offers_notif': {
+        'task': 'send_offers_notif',
+        'schedule': crontab(hour=7, minute=30, day_of_week=3)
+    }
 }
