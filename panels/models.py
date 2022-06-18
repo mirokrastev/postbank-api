@@ -16,3 +16,4 @@ class Discount(BaseModel):
     start_date = models.DateField()
     end_date = models.DateField()
     status = models.CharField(max_length=10, choices=STATUS_OPTS)
+    is_processed = models.BooleanField(default=False, blank=True)
