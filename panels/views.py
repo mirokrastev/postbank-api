@@ -7,7 +7,8 @@ from accounts.models import POSTerminal, Trader, Client
 from accounts.serializers import TraderSerializer, TerminalSerializer
 from panels.filters import DiscountsFilter
 from panels.models import Discount
-from panels.serializers import DiscountSerializer
+from panels.serializers import DiscountSerializer, EmployeeDiscountActionSerializer
+
 
 # ADMIN PANEL 1
 
@@ -40,12 +41,20 @@ class EmployeesPanelGetOffers(ListAPIView):
     serializer_class = DiscountSerializer
 
 
-class EmployeesPanelGetWaitingOffers(ListAPIView):
+class EmployeesPanelGetWaitingOffers(ListCreateAPIView):
     queryset = Discount.objects.filter(status='Waiting')
     serializer_class = DiscountSerializer
 
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return EmployeeDiscountActionSerializer
+        return self.serializer_class
+
+    def perform_create(self, serializer):
+        serializer.save(employee=self.request.user.bankemployee)
 
 # ADMIN PANEL 3
+
 
 class ClientsPanelView(ListAPIView):
     queryset = Discount.objects.filter(status='Active')

@@ -10,3 +10,11 @@ class DiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Discount
         fields = ('id', 'discount_percent', 'start_date', 'end_date', 'status', 'is_processed', 'trader')
+
+
+class EmployeeDiscountActionSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(source='discount.status', read_only=True)
+
+    class Meta:
+        model = models.EmployeeDiscountAction
+        fields = ('discount', 'state', 'status')
