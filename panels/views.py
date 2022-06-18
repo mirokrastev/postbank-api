@@ -16,8 +16,10 @@ from panels.serializers import DiscountSerializer
 
 
 class TradersPanelView(ListCreateAPIView):
-    queryset = Discount.objects.all()
     serializer_class = DiscountSerializer
+
+    def get_queryset(self):
+        return Discount.objects.filter(trader=self.request.user.trader)
 
 
 # ADMIN PANEL 2
