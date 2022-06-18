@@ -7,9 +7,9 @@ from accounts.models import POSTerminal, Trader, Client
 from accounts.serializers import TraderSerializer, TerminalSerializer
 from panels.filters import DiscountsFilter
 from panels.models import Discount
-from panels.serializers import DiscountSerializer, EmployeeDiscountActionSerializer
+from panels.serializers import DiscountSerializer, EmployeeDiscountSerializer, EmployeeDiscountActionSerializer
 
-import panels.mixins as mixins
+from panels import mixins
 
 
 # ADMIN PANEL 1
@@ -30,12 +30,7 @@ class TradersPanelView(mixins.TraderPermissionMixin, ListCreateAPIView):
 
 class EmployeesPanelGetTraders(mixins.EmployeePermissionMixin, ListAPIView):
     queryset = Trader.objects.all()
-    serializer_class = TraderSerializer
-
-
-class EmployeesPanelGetTerminals(mixins.EmployeePermissionMixin, ListAPIView):
-    queryset = POSTerminal.objects.all()
-    serializer_class = TerminalSerializer
+    serializer_class = DiscountSerializer
 
 
 class EmployeesPanelGetOffers(mixins.EmployeePermissionMixin, ListAPIView):
@@ -45,15 +40,26 @@ class EmployeesPanelGetOffers(mixins.EmployeePermissionMixin, ListAPIView):
 
 class EmployeesPanelGetWaitingOffers(mixins.EmployeePermissionMixin, ListCreateAPIView):
     queryset = Discount.objects.filter(status='Waiting')
-    serializer_class = DiscountSerializer
+    serializer_class = EmployeeDiscountSerializer
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return EmployeeDiscountActionSerializer
         return self.serializer_class
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
     def perform_create(self, serializer):
         serializer.save(employee=self.request.user.bankemployee)
+
+
+class EmployeesPanelGetTerminals(mixins.EmployeePermissionMixin, ListAPIView):
+    queryset = POSTerminal.objects.all()
+    serializer_class = TerminalSerializer
+
 
 # ADMIN PANEL 3
 
