@@ -1,14 +1,13 @@
 from http.client import HTTPResponse
 
 from django.http import HttpResponse
-from django.shortcuts import render
-from requests import Response
 from rest_framework.generics import ListCreateAPIView, ListAPIView
-from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
+from django_filters import rest_framework as filters
 
 from accounts.models import POSTerminal, Trader, Client
 from accounts.serializers import TerminalSerializer, TraderSerializer, ClientSerializer
+from panels.filters import DiscountsFilter
 from panels.models import Discount
 from panels.serializers import DiscountSerializer
 
@@ -17,6 +16,8 @@ from panels.serializers import DiscountSerializer
 
 class TradersPanelView(ListCreateAPIView):
     serializer_class = DiscountSerializer
+    filterset_class = DiscountsFilter
+    filter_backends = (filters.DjangoFilterBackend,)
 
     def get_queryset(self):
         return Discount.objects.filter(trader=self.request.user.trader)
@@ -43,7 +44,7 @@ class EmployeesPanelGetOffers(ListAPIView):
 # ADMIN PANEL 3
 
 class ClientsPanelView(ListAPIView):
-    queryset = Discount.objects.all()
+    queryset = Discount.objects.filter(status='Active')
     serializer_class = DiscountSerializer
 
 
