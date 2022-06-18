@@ -5,7 +5,7 @@ from panels import models
 
 
 class DiscountSerializer(serializers.ModelSerializer):
-    trader = TraderSerializer()
+    trader_username = serializers.CharField(source='trader.user.username')
 
     class Meta:
         model = models.Discount
