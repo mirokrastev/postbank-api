@@ -4,7 +4,7 @@ from creditcards.utils import get_digits, expiry_date
 from django.contrib.auth.password_validation import validate_password
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
-
+from rest_framework.exceptions import ValidationError
 
 from accounts import models
 from accounts import utils
@@ -47,6 +47,19 @@ class BaseSerializer(serializers.ModelSerializer):
             return value
 
 
+class UserSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField()
+    password = serializers.CharField(trim_whitespace=False, style={'input_type': 'password'})
+
+    def validate_password(self, value):
+        if not validate_password(value):
+            return value
+
+    class Meta:
+        model = models.User
+        fields = ('id', 'username', 'password', 'email')
+
+
 class TraderSerializer(BaseSerializer):
     phone_number = PhoneNumberField(source='trader.phone_number')
 
@@ -55,10 +68,59 @@ class TraderSerializer(BaseSerializer):
         fields = ('id', 'username', 'password', 'email', 'phone_number')
 
 
+class AdditionalTraderSyncSerializer(serializers.ModelSerializer):
+    phone_number = PhoneNumberField()
+
+    class Meta:
+        model = models.Trader
+        fields = ('phone_number',)
+
+
+class TraderSyncSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+    user = UserSerializer()
+    additional_info = AdditionalTraderSyncSerializer()
+
+    def create(self, validated_data):
+        user_info = validated_data.pop('user')
+        additional_info = validated_data.pop('additional_info')
+
+        user = models.User.objects.create(**user_info)
+        trader = models.Trader.objects.create(id=validated_data['id'], user=user, **additional_info)
+
+        return trader
+
+
 class BankEmployeeSerializer(BaseSerializer):
     class Meta:
         model = models.User
         fields = ('id', 'username', 'password', 'email')
+
+
+class BankEmployeeSyncSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+    user = UserSerializer()
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user = models.User.objects.get_or_create(**user_data)
+        employee = models.BankEmployee.objects.create(id=validated_data.pop('id'), user=user, **validated_data)
+        return employee
+
+
+class POSTerminalSyncSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+    trader = TraderSerializer()
+
+    def create(self, validated_data):
+        trader_info = validated_data.pop('trader')
+
+        trader_sync_serializer = TraderSyncSerializer(data=trader_info)
+        if trader_sync_serializer.is_valid():
+            trader = trader_sync_serializer.save()
+
+        pos_terminal = models.POSTerminal.objects.get_or_create(id=validated_data.pop('id'), trader=trader)
+        return pos_terminal
 
 
 class ClientSerializer(serializers.ModelSerializer):
