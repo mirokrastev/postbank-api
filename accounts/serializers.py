@@ -17,6 +17,9 @@ class TerminalSerializer(serializers.ModelSerializer):
 
 
 class TraderSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    email = serializers.CharField(source='user.email')
+
     class Meta:
         model = models.Trader
         fields = '__all__'
