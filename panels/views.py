@@ -9,11 +9,13 @@ from panels.filters import DiscountsFilter
 from panels.models import Discount
 from panels.serializers import DiscountSerializer, EmployeeDiscountActionSerializer
 
+import panels.mixins as mixins
+
 
 # ADMIN PANEL 1
 
 
-class TradersPanelView(ListCreateAPIView):
+class TradersPanelView(mixins.TraderPermissionMixin, ListCreateAPIView):
     serializer_class = DiscountSerializer
     filterset_class = DiscountsFilter
     filter_backends = (filters.DjangoFilterBackend,)
@@ -26,22 +28,22 @@ class TradersPanelView(ListCreateAPIView):
 # ADMIN PANEL 2
 
 
-class EmployeesPanelGetTraders(ListAPIView):
+class EmployeesPanelGetTraders(mixins.EmployeePermissionMixin, ListAPIView):
     queryset = Trader.objects.all()
     serializer_class = TraderSerializer
 
 
-class EmployeesPanelGetTerminals(ListAPIView):
+class EmployeesPanelGetTerminals(mixins.EmployeePermissionMixin, ListAPIView):
     queryset = POSTerminal.objects.all()
     serializer_class = TerminalSerializer
 
 
-class EmployeesPanelGetOffers(ListAPIView):
+class EmployeesPanelGetOffers(mixins.EmployeePermissionMixin, ListAPIView):
     queryset = Discount.objects.all()
     serializer_class = DiscountSerializer
 
 
-class EmployeesPanelGetWaitingOffers(ListCreateAPIView):
+class EmployeesPanelGetWaitingOffers(mixins.EmployeePermissionMixin, ListCreateAPIView):
     queryset = Discount.objects.filter(status='Waiting')
     serializer_class = DiscountSerializer
 
@@ -56,16 +58,12 @@ class EmployeesPanelGetWaitingOffers(ListCreateAPIView):
 # ADMIN PANEL 3
 
 
-class ClientsPanelView(ListAPIView):
+class ClientsPanelView(mixins.CardholderPermissionMixin, ListAPIView):
     queryset = Discount.objects.filter(status='Active')
     serializer_class = DiscountSerializer
 
 
-class ClientsPanelView2(ListAPIView):
-    ...
-
-
-class ClientsPanelChangeNotifStatus(APIView):
+class ClientsPanelChangeNotifStatus(mixins.CardholderPermissionMixin, APIView):
     def post(self, request):
         user_obj = Client.objects.get(user=request.user)
         if user_obj.notifications_status:
