@@ -24,6 +24,9 @@ class TradersPanelView(mixins.TraderPermissionMixin, ListCreateAPIView):
         trader = Trader.objects.get(user=self.request.user)
         return Discount.objects.filter(trader=trader)
 
+    def perform_create(self, serializer):
+        serializer.save(trader=self.request.user.trader)
+
 
 # ADMIN PANEL 2
 

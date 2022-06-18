@@ -5,7 +5,8 @@ from panels import models
 
 
 class DiscountSerializer(serializers.ModelSerializer):
-    trader = TraderSerializer()
+    trader = TraderSerializer(read_only=True)
+    status = serializers.ChoiceField(choices=models.Discount.STATUS_OPTS, required=False, read_only=True)
 
     class Meta:
         model = models.Discount
