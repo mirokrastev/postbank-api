@@ -18,12 +18,6 @@ class Discount(BaseModel):
     end_date = models.DateField()
     status = models.CharField(max_length=10, default='Waiting', choices=STATUS_OPTS)
     is_processed = models.BooleanField(default=False, blank=True)
-    is_locked = models.BooleanField(default=False, blank=True)
-
-    def save(self, *args, **kwargs):
-        if self.is_locked:
-            raise PermissionDenied('Cannot change locked Discount!')
-        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.id}: {self.status}'
