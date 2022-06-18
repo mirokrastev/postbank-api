@@ -3,7 +3,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import GenericViewSet
 
 from accounts import models
 from accounts import serializers
@@ -34,8 +34,3 @@ class LogoutView(APIView):
     def post(self, request, *args, **kwargs):
         self.request.user.auth_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class UserViewSet(ReadOnlyModelViewSet):
-    queryset = models.User.objects.all()
-    serializer_class = serializers.ClientSerializer
