@@ -30,7 +30,7 @@ class TradersPanelView(mixins.TraderPermissionMixin, ListCreateAPIView):
 
 class EmployeesPanelGetTraders(mixins.EmployeePermissionMixin, ListAPIView):
     queryset = Trader.objects.all()
-    serializer_class = DiscountSerializer
+    serializer_class = TraderSerializer
 
 
 class EmployeesPanelGetOffers(mixins.EmployeePermissionMixin, ListAPIView):
