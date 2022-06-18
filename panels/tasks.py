@@ -1,7 +1,9 @@
+from datetime import date, timedelta
 from smtplib import SMTPRecipientsRefused
 from celery import shared_task
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Q
 
 from accounts.models import Client
 from panels.models import Discount
@@ -41,3 +43,10 @@ def send_offers_notif():
     for i in all_accepted_offers:
         i.is_processed = True
         i.save()
+
+
+@shared_task(name='mark_expired_offers')
+def mark_expired_offers():
+    print('marking expired offers')
+    current_date = date.today() - timedelta(days=1)
+    Discount.objects.filter(Q(end_date__lte=current_date) & ~Q(status='Expired')).update(status='Expired')

@@ -36,5 +36,9 @@ app.conf.beat_schedule = {
     'send_offers_notif': {
         'task': 'send_offers_notif',
         'schedule': crontab(hour=7, minute=30, day_of_week=3)
+    },
+    'mark_expired_offers': {
+        'task': 'mark_expired_offers',
+        'schedule': timedelta(days=1)
     }
 }
