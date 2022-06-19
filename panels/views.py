@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from rest_framework.generics import ListCreateAPIView, ListAPIView
+from rest_framework.generics import ListCreateAPIView, ListAPIView, CreateAPIView
 from rest_framework.views import APIView
 from django_filters import rest_framework as filters
 
@@ -26,6 +26,19 @@ class TradersPanelView(mixins.TraderPermissionMixin, ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(trader=self.request.user.trader)
+
+
+class TradersPanelChangeNotifStatus(mixins.TraderPermissionMixin, APIView):
+    def post(self, request, *args, **kwargs):
+        trader = self.request.user.trader
+        trader.notifications_status = not trader.notifications_status
+        trader.save()
+
+        return HttpResponse('Notification status changed')
+
+    def get(self, request, *args, **kwargs):
+        trader = self.request.user.trader
+        return HttpResponse(str(trader.notifications_status))
 
 
 # ADMIN PANEL 2
@@ -73,13 +86,13 @@ class ClientsPanelView(mixins.CardholderPermissionMixin, ListAPIView):
 
 
 class ClientsPanelChangeNotifStatus(mixins.CardholderPermissionMixin, APIView):
-    def post(self, request):
-        user_obj = Client.objects.get(user=request.user)
-        user_obj.notifications_status = not user_obj.notifications_status
-        user_obj.save()
+    def post(self, request, *args, **kwargs):
+        client = self.request.user.client
+        client.notifications_status = not client.notifications_status
+        client.save()
 
         return HttpResponse('Notification status changed')
 
-    def get(self, request):
-        user_obj = Client.objects.get(user=request.user)
-        return HttpResponse(f'{user_obj.notifications_status}')
+    def get(self, request, *args, **kwargs):
+        client = self.request.user.client
+        return HttpResponse(str(client.notifications_status))

@@ -4,6 +4,7 @@ from panels import views
 urlpatterns = [
     # Panel 1
     path('api/traders/', views.TradersPanelView.as_view(), name='traders'),
+    path('api/traders/notif', views.TradersPanelChangeNotifStatus.as_view(), name='traders_notif_status'),
 
     # Panel 2
     path('api/employees/traders/', views.EmployeesPanelGetTraders.as_view(), name='employees_traders'),

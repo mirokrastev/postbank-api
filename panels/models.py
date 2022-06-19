@@ -1,6 +1,5 @@
 from datetime import date
 
-from django.core.exceptions import PermissionDenied
 from django.db import models
 from accounts.models import Trader, BankEmployee
 from base.models import BaseModel

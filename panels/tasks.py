@@ -35,7 +35,7 @@ def send_offers_notif():
                 'New discount offers from postbank traders',
                 msg_joined,
                 settings.EMAIL_HOST_USER,
-                [cardholder.user.email,]
+                [cardholder.user.email]
             )
         except SMTPRecipientsRefused:
             break

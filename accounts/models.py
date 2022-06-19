@@ -26,6 +26,7 @@ class User(BaseModel, AbstractUser):
 class Trader(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True)
     phone_number = PhoneNumberField()
+    notifications_status = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self.user:
