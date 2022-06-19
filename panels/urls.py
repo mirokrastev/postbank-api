@@ -15,5 +15,5 @@ urlpatterns = [
 
     # Panel 3
     path('api/clients/', views.ClientsPanelView.as_view(), name='clients_offers'),
-    path('api/clients/notif/', views.ClientsPanelChangeNotifStatus.as_view(), name='clients_notif_status'),
+    path('api/clients/notif', views.ClientsPanelChangeNotifStatus.as_view(), name='clients_notif_status'),
 ]
