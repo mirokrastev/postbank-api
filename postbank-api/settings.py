@@ -39,11 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third party apps
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
+    'django_filters',
+    'phonenumber_field',
+    'django_rest_passwordreset',
 
+    'base',
     'accounts',
+    'panels',
 ]
 
 MIDDLEWARE = [
@@ -89,20 +95,13 @@ WSGI_APPLICATION = 'postbank-api.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL'),
+        conn_max_age=600,
+    )
 }
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=config('DATABASE_URL'),
-#         conn_max_age=600,
-#     )
-# }
-#
-# DATABASES['default'].update({'ATOMIC_REQUESTS': True})
+DATABASES['default'].update({'ATOMIC_REQUESTS': True})
 
 
 REST_FRAMEWORK = {
@@ -169,3 +168,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+
+# Phone Number Constants
+PHONENUMBER_DB_FORMAT = 'NATIONAL'
+PHONENUMBER_DEFAULT_REGION = 'BG'
