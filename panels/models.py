@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from accounts.models import Trader, BankEmployee
@@ -21,6 +23,12 @@ class Discount(BaseModel):
 
     def __str__(self):
         return f'{self.id}: {self.status}'
+
+    def save(self, *args, **kwargs):
+        current_date = date.today()
+        if self.end_date < current_date:
+            self.status = 'Expired'
+        super().save(*args, **kwargs)
 
 
 class EmployeeDiscountAction(BaseModel):
