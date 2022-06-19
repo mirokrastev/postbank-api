@@ -75,10 +75,7 @@ class ClientsPanelView(mixins.CardholderPermissionMixin, ListAPIView):
 class ClientsPanelChangeNotifStatus(mixins.CardholderPermissionMixin, APIView):
     def post(self, request):
         user_obj = Client.objects.get(user=request.user)
-        if user_obj.notifications_status:
-            user_obj.notifications_status = False
-        else:
-            user_obj.notifications_status = True
+        user_obj.notifications_status = not user_obj.notifications_status
         user_obj.save()
 
         return HttpResponse('Notification status changed')
