@@ -38,7 +38,7 @@ class TradersPanelChangeNotifStatus(mixins.TraderPermissionMixin, APIView):
 
     def get(self, request, *args, **kwargs):
         trader = self.request.user.trader
-        return HttpResponse(str(trader.notifications_status))
+        return HttpResponse({'state': trader.notifications_status})
 
 
 # ADMIN PANEL 2
@@ -91,8 +91,8 @@ class ClientsPanelChangeNotifStatus(mixins.CardholderPermissionMixin, APIView):
         client.notifications_status = not client.notifications_status
         client.save()
 
-        return HttpResponse('Notification status changed')
+        return HttpResponse({'status': 'Notification status changed'})
 
     def get(self, request, *args, **kwargs):
         client = self.request.user.client
-        return HttpResponse(str(client.notifications_status))
+        return HttpResponse({'state': client.notifications_status})

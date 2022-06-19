@@ -30,7 +30,7 @@ def check_discount_status(instance, created, **kwargs):
     trader = instance.discount.trader
     user = trader.user
 
-    if EmployeeDiscountAction.objects.filter(discount=instance.discount, state=False).count() >= 1:
+    if EmployeeDiscountAction.objects.filter(discount=instance.discount, state=False).count() > 1:
         return
 
     if instance.state is False:
